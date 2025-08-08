@@ -158,11 +158,35 @@ SpeedType/
 - Learning resources and practice modes
 
 ## Contributing
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+
+We welcome contributions from the community! SpeedType follows a structured development workflow to ensure code quality and smooth collaboration.
+
+### Quick Start for Contributors
+
+1. **Fork the repository** and clone your fork
+2. **Create a feature branch** from `main`:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+3. **Make your changes** following our coding standards
+4. **Test thoroughly** - run tests and verify functionality
+5. **Submit a Pull Request** with a clear description
+
+### Development Workflow
+
+- **Branching**: We use a GitFlow-inspired model with `main` as the primary branch
+- **Pull Requests**: All changes must go through PR review process
+- **Code Review**: At least one approval required before merging
+- **Testing**: Automated tests must pass, manual testing encouraged
+- **Deployment**: Automatic deployment to production on merge to `main`
+
+### Branch Naming Convention
+
+- `feature/description` - New features
+- `fix/description` - Bug fixes  
+- `test/description` - Testing improvements
+
+**📋 For detailed contributing guidelines, code review standards, and development setup instructions, please see [CONTRIBUTING.md](./CONTRIBUTING.md)**
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
