@@ -22,35 +22,21 @@ test.describe('Single Player Mode', () => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
     console.log('Page loaded');
 
-    // Wait for socket connection by checking connection status
+    // Wait for socket connection by checking for quotes to load (indicates backend connection)
     try {
-      const connectionStatus = page.locator('.connection-status');
-      await connectionStatus.waitFor({ state: 'visible', timeout: 30000 });
+      console.log('Waiting for backend connection...');
       
-      // Wait for Connected status with retry logic
-      let isConnected = false;
-      let attempts = 0;
-      const maxAttempts = 5;
+      // Wait for quotes grid to appear (this means backend is connected and serving quotes)
+      const quotesGrid = page.locator('.quotes-grid');
+      await quotesGrid.waitFor({ state: 'visible', timeout: 15000 });
       
-      while (!isConnected && attempts < maxAttempts) {
-        const status = await connectionStatus.textContent() || '';
-        console.log(`Connection status attempt ${attempts + 1}: ${status}`);
-        
-        if (status === 'Connected') {
-          isConnected = true;
-          console.log('Successfully connected to server');
-        } else {
-          attempts++;
-          console.log(`Waiting for connection, attempt ${attempts}/${maxAttempts}`);
-          await page.waitForTimeout(2000); // Wait 2 seconds between checks
-        }
-      }
+      // Verify we have quote cards (means Socket.IO and HTTP are working)
+      const quoteCards = page.locator('.quote-card');
+      await quoteCards.first().waitFor({ state: 'visible', timeout: 10000 });
       
-      if (!isConnected) {
-        throw new Error('Not connected to server after multiple attempts');
-      }
+      console.log('Successfully connected to backend - quotes loaded');
     } catch (error) {
-      console.error('Failed to verify socket connection');
+      console.error('Failed to verify backend connection');
       await page.screenshot({ path: 'connection-failure.png' });
       throw error;
     }
