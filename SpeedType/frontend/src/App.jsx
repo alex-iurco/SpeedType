@@ -54,8 +54,7 @@ try {
 
   socket.io.on('reconnect_attempt', (attempt) => {
     console.log('Socket.IO Reconnection Attempt:', attempt);
-    // Reset game state on reconnection attempts
-    resetGameState();
+    // Note: Game state reset will be handled in the component
   });
 
   // After successful polling connection, enable WebSocket upgrade
@@ -122,7 +121,8 @@ const fallbackQuotes = [
 ];
 
 function App({ initialMultiplayer = false }) {
-  const [isConnected, setIsConnected] = useState(socket.connected)
+  // Initialize connection state more conservatively
+  const [isConnected, setIsConnected] = useState(false)
   const [connectionError, setConnectionError] = useState(null)
   const [raceState, setRaceState] = useState('waiting') // 'waiting', 'racing', 'finished'
   const [textToType, setTextToType] = useState('')
@@ -191,6 +191,33 @@ function App({ initialMultiplayer = false }) {
     fetchQuotes();
   }, []); // Empty dependency array means this runs once on mount
 
+  // Synchronize connection state on component mount
+  useEffect(() => {
+    // Check and sync initial connection state
+    if (socket && socket.connected !== isConnected) {
+      console.log('Syncing connection state on mount. Socket connected:', socket.connected);
+      setIsConnected(socket.connected);
+      if (socket.connected) {
+        setConnectionError(null);
+      }
+    }
+  }, []); // Run once on mount
+
+  // Add periodic connection state verification
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (socket && socket.connected !== isConnected) {
+        console.log('Connection state mismatch detected. Socket:', socket.connected, 'State:', isConnected);
+        setIsConnected(socket.connected);
+        if (socket.connected) {
+          setConnectionError(null);
+        }
+      }
+    }, 1000); // Check every second
+
+    return () => clearInterval(interval);
+  }, [isConnected]);
+
   // Socket event handlers with error recovery
   useEffect(() => {
     function onConnect() {
@@ -209,6 +236,13 @@ function App({ initialMultiplayer = false }) {
       setIsConnected(false);
       setConnectionError(`Connection lost: ${reason}`);
       resetGameState();
+    }
+
+    function onReconnect() {
+      console.log('Reconnected to backend');
+      setIsConnected(true);
+      setConnectionError(null);
+      // Don't reset game state on reconnection - preserve current state
     }
 
     function onConnectError(error) {
@@ -299,6 +333,7 @@ function App({ initialMultiplayer = false }) {
     // Register event handlers
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
+    socket.on('reconnect', onReconnect);
     socket.on('connect_error', onConnectError);
     socket.on('error', onError);
     socket.on('room_state', onRoomState);
@@ -310,6 +345,7 @@ function App({ initialMultiplayer = false }) {
       // Cleanup event handlers
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
+      socket.off('reconnect', onReconnect);
       socket.off('connect_error', onConnectError);
       socket.off('error', onError);
       socket.off('room_state', onRoomState);

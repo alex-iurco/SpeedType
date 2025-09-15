@@ -79,3 +79,4 @@ logs/
 **/local.log 
 SpeedType/frontend/package-lock.json
 SpeedType/scripts/set-railway-env.sh
+SpeedType/backend/nohup.out

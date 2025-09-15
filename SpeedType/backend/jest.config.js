@@ -2,7 +2,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/test/helpers/setup.ts'],
   testMatch: ['**/__tests__/**/*.test.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1'
@@ -15,4 +14,4 @@ module.exports = {
   testTimeout: 30000,
   detectOpenHandles: true,
   forceExit: true
-}; 
+};

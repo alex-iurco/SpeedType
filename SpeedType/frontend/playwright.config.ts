@@ -43,16 +43,16 @@ const config: PlaywrightTestConfig = {
     navigationTimeout: 30000,
     actionTimeout: 15000,
   },
-  // Only start local server if not testing against production
-  ...(isProduction ? {} : {
-    webServer: {
-      command: 'npm run dev -- --mode test --force',
-      url: URLS.test.frontend,
-      // @ts-ignore - process is available in Node.js environment
-      reuseExistingServer: false,
-      timeout: 120000,
-    },
-  }),
+  // Skip starting local server since it's already running
+  // ...(isProduction ? {} : {
+  //   webServer: {
+  //     command: 'npm run dev -- --mode test --force',
+  //     url: URLS.test.frontend,
+  //     // @ts-ignore - process is available in Node.js environment
+  //     reuseExistingServer: true,
+  //     timeout: 120000,
+  //   },
+  // }),
   projects: [
     {
       name: 'chromium',
